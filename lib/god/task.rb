@@ -464,11 +464,12 @@ module God
     #
     # Returns the Array of String messages.
     def log_line(watch, metric, condition, result)
-      status =
       if self.trigger?(metric, result)
-        "[trigger]"
+        log_level = :warn
+        status = "[trigger]"
       else
-        "[ok]"
+        log_level = :info
+        status = "[ok]"
       end
 
       messages = []
@@ -477,11 +478,11 @@ module God
       if condition.info
         Array(condition.info).each do |condition_info|
           messages << "#{watch.name} #{status} #{condition_info} (#{condition.base_name})"
-          applog(watch, :info, messages.last)
+          applog(watch, log_level, messages.last)
         end
       else
         messages << "#{watch.name} #{status} (#{condition.base_name})"
-        applog(watch, :info, messages.last)
+        applog(watch, log_level, messages.last)
       end
 
       # Log.
